@@ -96,13 +96,16 @@ func (c *ConvenientClient) DeleteZone(zone string) error {
 func (c *ConvenientClient) GetRecordID(record *Record) error {
 	finalID := ""
 	url := fmt.Sprintf("AllRecord/%s/%s", record.Zone, record.FQDN)
+	log.Printf("[INFO] GetRecordID url: %s", url)
 	var records AllRecordsResponse
 	err := c.Do("GET", url, nil, &records)
 	if err != nil {
 		return fmt.Errorf("Failed to find Dyn record id: %s", err)
 	}
 	for _, recordURL := range records.Data {
+		log.Printf("[INFO] GetRecordID recordURL: %s", recordURL)
 		id := strings.TrimPrefix(recordURL, fmt.Sprintf("/REST/%sRecord/%s/%s/", record.Type, record.Zone, record.FQDN))
+		log.Printf("[INFO] GetRecordID id: %s", id)
 		if !strings.Contains(id, "/") && id != "" {
 			finalID = id
 			log.Printf("[INFO] Found Dyn record ID: %s", id)
